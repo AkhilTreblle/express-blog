@@ -4,7 +4,6 @@ var router = express.Router();
 const bodyParser = require('body-parser');
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
-const moment = require('moment');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/myExpress');
 
@@ -90,7 +89,7 @@ res.render('signup',{message:''});
           };
             
           
-            res.redirect('/list'); 
+            res.redirect('/dashboard'); 
             
           
         } else {
@@ -103,30 +102,46 @@ res.render('signup',{message:''});
       });
   });
   router.post('/signup', (req, res) => {
-
-    if (!req.body.email || !req.body.password) {
-      res.render('signup', { message: 'Please provide both email and passwords' });
-    } else {
-
-      const newUser = new User({
-        name:req.body.name,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10),
-        role:'user',
-      });
-      
-      req.session.user = newUser;
-
-      newUser.save()
-        .then(() => {
-          res.redirect('/list');
-
-        })
-        .catch((error) => {
-          res.render('signup', { message: 'Error creating user: ' + error });
-        });
+    const { name, email, password ,confirmPassword} = req.body;
+  
+    if (!email || !password) {
+      return res.render('signup', { message: 'Please provide both email and password' });
     }
+    if (password !== confirmPassword) {
+      return res.render('signup', { message: 'Passwords do not match' });
+    }
+  
+    // Check if the user's email already exists in the database
+    User.findOne({ email })
+      .then((existingUser) => {
+        if (existingUser) {
+          return res.render('signup', { message: 'User email already exists' });
+        }
+  
+        // If the email is unique, create a new user
+        const newUser = new User({
+          name,
+          email,
+          password: bcrypt.hashSync(password, 10),
+          role: 'user',
+        });
+  
+        // Save the new user to the database
+        newUser
+          .save()
+          .then((user) => {
+            req.session.user = user; // Store the user in the session
+            res.redirect('/dashboard');
+          })
+          .catch((error) => {
+            res.render('signup', { message: 'Error creating user: ' + error });
+          });
+      })
+      .catch((error) => {
+        res.render('signup', { message: 'Error checking user email: ' + error });
+      });
   });
+  
   router.get('/logout', function(req, res){
     req.session.destroy(function(){
        console.log("user logged out.")
@@ -137,7 +152,7 @@ res.render('signup',{message:''});
  
 
   //BLOG RELATED ROUTES
-  router.get('/list', checkSignIn, (req, res) => {
+  router.get('/dashboard', checkSignIn, (req, res) => {
     const user = req.session.user;
     const message = req.session.message;
     req.session.message = null;
@@ -145,7 +160,7 @@ res.render('signup',{message:''});
     if (user.role === 'admin') {
       User.find()
         .then(allUsers => {
-          res.render('super-admin', { user, message, allUsers }); // Pass the session user object and allUsers array to the view
+          res.render('super-admin/super-admin', { user, message, allUsers }); // Pass the session user object and allUsers array to the view
         })
         .catch(error => {
           console.log(error);
@@ -155,7 +170,7 @@ res.render('signup',{message:''});
       Category.findOne({ user: user.id })
         .then(category => {
           if (!category) {
-            res.render('signup', { message: 'Error login' });
+            res.status(500).json({ error: 'An error occurred' });
             // Return here or use else condition for the next .then()
             return;
           }
@@ -164,15 +179,15 @@ res.render('signup',{message:''});
         })
         .then(pendingPosts => {
           // Now you have the 'pendingPosts' and 'foundCategory' data, you can render the view with this data
-          res.render('category-manager', { user, pendingPosts });
+          res.render('topic-manager/topic-manager', { user, pendingPosts });
         })
         .catch(error => {
-          res.render('signup', { message: 'Error creating user: ' + error });
+          res.status(500).json({ error: 'An error occurred' });
         });
     } else {
       Category.find()
         .then(categories => {
-          res.render('articles', { user, message, categories });
+          res.render('user-dashboard/create-post', { user, message, categories });
         })
         .catch(error => {
           console.log(error);
@@ -185,11 +200,12 @@ res.render('signup',{message:''});
 
 router.post('/blog-post', (req, res) => {
 
+  console.log(req.session.user._id);
       const newPost = new Post({
         title:req.body.title,
         content: req.body.content,
         status: 'pending',
-        user:req.session.user.id,
+        user:req.session.user._id,
         category:req.body.category
       });
   
@@ -197,15 +213,15 @@ router.post('/blog-post', (req, res) => {
         .then(() => {
           req.session.message = 'success';
         
-          res.redirect('/list')
+          res.redirect('/dashboard')
         })
         .catch((error) => {
-          res.render('list', { message: 'Error creating user: ' + error });
+          res.render('dashboard', { message: 'Error creating user: ' + error });
         });
     
   });
   router.get('/blog-posts', (req, res) => {
-    const userId = req.session.user.id;
+    const userId = req.session.user._id;
     const message = req.session.message;
     req.session.message = null;
     Post.find({ user: userId })
@@ -217,7 +233,7 @@ router.post('/blog-post', (req, res) => {
         Category.find()
           .then(categories => {
 
-            res.render('blogs', { posts, user, categories ,message});
+            res.render('user-dashboard/blog-list', { posts, user, categories ,message});
           })
           .catch(error => {
             console.error(error);
@@ -243,10 +259,10 @@ router.post('/blog-post', (req, res) => {
       })
       .then(() => {
         req.session.message = 'success';
-        res.redirect('/list');
+        res.redirect('/dashboard');
       })
       .catch((error) => {
-        res.render('super-admin', { message: 'Error creating category: ' + error });
+        res.render('super-admin/super-admin', { message: 'Error creating category: ' + error });
       });
   });
 
@@ -281,7 +297,7 @@ router.get('/users',(req,res)=>{
   User.find().sort({ _id: -1 })
   .then(users => {
     user = req.session.user;
-    res.render('users', { users ,user});
+    res.render('super-admin/users', { users ,user});
 
   }).catch(error => {
       console.log(error);
