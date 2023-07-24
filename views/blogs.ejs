@@ -138,9 +138,20 @@
                 <span class="text-uppercase page-subtitle">Components</span>
                 <h3 class="page-title">Blog Posts</h3>
               </div>
+              <% if (message === 'success') { %>
+                <div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                  <i class="fa fa-check mx-2"></i>
+                  <strong>Success!</strong> Your post has been updated!
+                </div>
+                <% } %>
             </div>
             <!-- End Page Header -->
+           
             <div class="row">
+            
                 <% posts.forEach((post) => { %>
               <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                 <div class="card card-small card-post card-post--1">
@@ -159,7 +170,7 @@
                   </br></br>
                     <span>  <button type="button" class="mb-2 btn btn-sm <%= post.status === 'approved' ? 'btn-success' : 'btn-danger' %> mr-1"><%= post.status %></button>
                     </span>
-                    <button type="button" class="mb-2 btn btn-sm btn-outline-dark mr-1 edit-button" data-toggle="modal" data-id="<%= post.id %>" data-target="#editPostModal">Edit</button>
+                    <button type="button" class="mb-2 btn btn-sm btn-outline-dark mr-1 edit-button" data-toggle="modal" data-category="<%= post.category.id %>" data-content="<%= post.content %>" data-title="<%= post.title %>" data-id="<%= post.id %>" data-target="#editPostModal">Edit</button>
                   
 
                   </div>
@@ -186,25 +197,29 @@
       </div>
       <div class="modal-body">
         <!-- Your edit post form goes here -->
-        <form class="edit-post-form" action="/edit-post" method="post">
+        <form class="edit-post-form" action="/update-post" method="post">
+          <input type="hidden" id="postId" name="id" >
           <div class="form-group">
-            <input class="form-control form-control-lg mb-3" type="text" name="title" placeholder="Your Post Title">
+            <input class="form-control form-control-lg mb-3" id="postTitle" type="text" name="title" placeholder="Your Post Title">
           </div>
           <div class="form-group">
-            <textarea name="content" class="form-control mb-3" rows="5" placeholder="Post Content"></textarea>
+            <textarea name="content" class="form-control mb-3" id="postContent" rows="5" placeholder="Post Content"></textarea>
           </div>
           <div class="form-group">
-            <select id="category" class="form-control mb-3" name="category">
-              <option value="">Please choose the category</option>
+            <select id="categorySel" class="form-control mb-3" name="category">
+              <% categories.forEach((category) => { %>
+              <option value="<%= category.id %>"><%= category.name %></option>
+              <% }); %>
              
             </select>
           </div>
-        </form>
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveChangesButton">Save changes</button>
+        <button type="submit" class="btn btn-primary" id="saveChangesButton">Save changes</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
@@ -217,4 +232,38 @@
     <script src="scripts/extras.1.1.0.min.js"></script>
     <script src="scripts/shards-dashboards.1.1.0.min.js"></script>
   </body>
+  <script>$(document).ready(function () {
+    // When the edit button is clicked, populate the modal with data
+    $('.edit-button').on('click', function () {
+      var title = $(this).data('title');
+      var content = $(this).data('content');
+      var postId = $(this).data('id');
+      var category = $(this).data('category');
+  
+      // Set the data in the modal form
+      $('#postTitle').val(title);
+      $('#postContent').val(content);
+      $('#postId').val(postId);
+      $('#categorySel').val(category);
+  
+      // Open the modal
+      $('#editPostModal').modal('open');
+    });
+  
+    // Handle form submission
+    $('#editForm').on('submit', function (e) {
+      e.preventDefault();
+  
+      // Get the updated values from the form
+      var updatedTitle = $('#postTitle').val();
+      var updatedContent = $('#postContent').val();
+      var postId = $('#postId').val();
+  
+      // Perform the update action here (e.g., AJAX call to the backend)
+  
+      // Close the modal after saving changes
+      $('#editPostModal').modal('close');
+    });
+  });
+  </script>
 </html>

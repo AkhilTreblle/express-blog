@@ -25,6 +25,9 @@ checkSignIn = (req, res,next) => {
     res.redirect('/logout');
   }
 }
+
+
+//HOME PAGE
 router.get('/', (req, res) => {
     User.findOne({ role: 'admin' })
       .then(adminUser => {
@@ -61,6 +64,7 @@ router.get('/', (req, res) => {
       });
   });
 
+//AUTH ROUTES
 router.get('/signup',(req,res)=> {
 res.render('signup',{message:''});
 });
@@ -98,8 +102,41 @@ res.render('signup',{message:''});
         res.status(500).send('Internal Server Error');
       });
   });
-  
+  router.post('/signup', (req, res) => {
 
+    if (!req.body.email || !req.body.password) {
+      res.render('signup', { message: 'Please provide both email and passwords' });
+    } else {
+
+      const newUser = new User({
+        name:req.body.name,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        role:'user',
+      });
+      
+      req.session.user = newUser;
+
+      newUser.save()
+        .then(() => {
+          res.redirect('/list');
+
+        })
+        .catch((error) => {
+          res.render('signup', { message: 'Error creating user: ' + error });
+        });
+    }
+  });
+  router.get('/logout', function(req, res){
+    req.session.destroy(function(){
+       console.log("user logged out.")
+    });
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.redirect('/');
+  });
+ 
+
+  //BLOG RELATED ROUTES
   router.get('/list', checkSignIn, (req, res) => {
     const user = req.session.user;
     const message = req.session.message;
@@ -144,53 +181,9 @@ res.render('signup',{message:''});
     }
   });
   
-  router.post('/signup', (req, res) => {
+  
 
-    if (!req.body.email || !req.body.password) {
-      res.render('signup', { message: 'Please provide both email and passwords' });
-    } else {
-
-      const newUser = new User({
-        name:req.body.name,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10),
-        role:'user',
-      });
-      
-      req.session.user = newUser;
-
-      newUser.save()
-        .then(() => {
-          res.redirect('/list');
-
-        })
-        .catch((error) => {
-          res.render('signup', { message: 'Error creating user: ' + error });
-        });
-    }
-  });
-  router.get('/logout', function(req, res){
-    req.session.destroy(function(){
-       console.log("user logged out.")
-    });
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.redirect('/');
-  });
- 
-
-
-router.get('/edit/:id',(req,res)=>{
-  User.findById(req.params.id)
-  .then(user => {
-    res.json({ user });
-  })
-  .catch(error => {
-    console.log(error);
-    res.status(500).json({ error: 'An error occurred' });
-  });
-  });
-
-  router.post('/blog-post', (req, res) => {
+router.post('/blog-post', (req, res) => {
 
       const newPost = new Post({
         title:req.body.title,
@@ -199,8 +192,7 @@ router.get('/edit/:id',(req,res)=>{
         user:req.session.user.id,
         category:req.body.category
       });
-   
-
+  
       newPost.save()
         .then(() => {
           req.session.message = 'success';
@@ -214,25 +206,37 @@ router.get('/edit/:id',(req,res)=>{
   });
   router.get('/blog-posts', (req, res) => {
     const userId = req.session.user.id;
-  
-    Post.find({ user: userId }).sort({ _id: -1 }).populate('category')
+    const message = req.session.message;
+    req.session.message = null;
+    Post.find({ user: userId })
+      .sort({ _id: -1 })
+      .populate('category')
       .then(posts => {
-         user = req.session.user;
-        res.render('blogs', { posts ,user});
+        const user = req.session.user;
+  
+        Category.find()
+          .then(categories => {
+
+            res.render('blogs', { posts, user, categories ,message});
+          })
+          .catch(error => {
+            console.error(error);
+            res.status(500).json({ error: 'An error occurred while fetching categories' });
+          });
       })
       .catch(error => {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred' });
+        res.status(500).json({ error: 'An error occurred while fetching posts' });
       });
   });
 
+//ADDING NEW CATEGORY
   router.post('/category', (req, res) => {
     const newCategory = new Category({
       name: req.body.title,
       user: req.body.user
     });
-  
-    // Find the user by their ID and update their status to "manager"
+
     User.findByIdAndUpdate(req.body.user, { role: 'manager' })
       .then(() => {
         return newCategory.save();
@@ -246,31 +250,7 @@ router.get('/edit/:id',(req,res)=>{
       });
   });
 
-// router.get('/manage-blogs', checkSignIn, (req, res) => {
-//   const loggedInUserId = req.session.user.id;
-
-//   Category.findOne({ user: loggedInUserId })
-//   .then(category => {
-//     if (!category) {
-//       res.render('signup', { message: 'Error login' });
-//       // Return here or use else condition for the next .then()
-//       return;
-//     }
-
-//     foundCategory = category; // Store the category in the variable
-
-//     return Post.find({ status: 'pending', category: category._id });
-//   })
-//   .then(pendingPosts => {
-//     // Now you have the 'pendingPosts' and 'foundCategory' data, you can render the view with this data
-//     res.render('category-manager', { pendingPosts, category: foundCategory });
-//   })
-//   .catch(error => {
-//     res.render('signup', { message: 'Error creating user: ' + error });
-//   });
-// });
-
-
+//POST APPROVAL - REJECTION
 router.post('/update-status', (req, res) => {
   Post.findByIdAndUpdate(req.body.id, { status: req.body.status })
     .then(response => {
@@ -282,6 +262,19 @@ router.post('/update-status', (req, res) => {
     });
 });
 
+router.post('/update-post', (req, res) => {
+  Post.findByIdAndUpdate(req.body.id, { title: req.body.title ,content: req.body.content ,category: req.body.category })
+    .then(response => {
+     req.session.message = 'success';
+     res.redirect('/blog-posts')
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({ error: 'An error occurred' });
+    });
+});
+
+//USER LIST
 router.get('/users',(req,res)=>{
   const userId = req.session.user.id;
 
