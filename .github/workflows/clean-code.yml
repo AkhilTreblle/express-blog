@@ -1,0 +1,29 @@
+name: Cleanup Express Project
+on:
+  push:
+    branches:
+      - main # Adjust the branch name as per your default branch
+  pull_request:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Adjust the Node.js version as needed
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run cleanup commands
+        run: |
+          # Add cleanup commands here
+          # For example, to remove unnecessary files and directories
+          # rm -rf node_modules
+          # rm -rf dist
