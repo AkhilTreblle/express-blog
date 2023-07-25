@@ -19,8 +19,8 @@ Demo project for blog posting and approval from the backend, built with Express 
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/yourusername/your-repo.git`
-2. Navigate to the project directory: `cd your-repo`
+1. Clone the repository: `git clone https://github.com/AkhilTreblle/express-blog`
+2. Navigate to the project directory: `cd express-blog`
 3. Install dependencies: `npm install`
 
 ## Usage
