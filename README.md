@@ -37,20 +37,20 @@ A couple of screenshots to delight you before you use this template.
 ### 🔺 Login 
 
 <p align="center">
-  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/login.png" alt="All the issue templates.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/blob/main/public/images/login.png" alt="All the issue templates.">
 </p>
 
 ### 🔻 Topic Manager
 
 <p align="center">
-  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/topic-manager.png" alt="Bug issue template opened.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/blob/main/public/images/topic-manager.png" alt="Bug issue template opened.">
 </p>
 
 ### 📘 Home
 
 
 <p align="center">
-  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/home.png" alt="README.md template.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/blob/main/public/images/home.png" alt="README.md template.">
 
 </p>
 
