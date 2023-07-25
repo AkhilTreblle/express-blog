@@ -6,7 +6,6 @@ Demo project for blog posting and approval from the backend, built with Express 
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API Endpoints](#api-endpoints)
 - [Technologies Used](#technologies-used)
 - [Contributing](#contributing)
 - [License](#license)
@@ -54,16 +53,7 @@ A couple of screenshots to delight you before you use this template.
 
 </p>
 
-## API Endpoints
-
-If your project includes an API, list the important endpoints and their functionalities here.
-
-| Endpoint                | Method | Description             |
-|-------------------------|--------|-------------------------|
-| `/api/posts`            | GET    | Get all blog posts      |
-| `/api/posts/:postId`    | GET    | Get a single blog post  |
-| `/api/posts`            | POST   | Create a new blog post  |
-| ...                     | ...    | ...                     |
+                   |
 
 ## Technologies Used
 
