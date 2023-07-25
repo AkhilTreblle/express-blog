@@ -82,7 +82,7 @@ res.render('signup',{message:''});
   
         if (passwordMatch) {
           req.session.user = {
-            id: user._id,
+            _id: user._id,
             email: user.email,
             role: user.role,
             name: user.name
@@ -167,7 +167,7 @@ res.render('signup',{message:''});
           res.status(500).json({ error: 'An error occurred' });
         });
     } else if (user.role === 'manager') {
-      Category.findOne({ user: user.id })
+      Category.findOne({ user: user._id })
         .then(category => {
           if (!category) {
             res.status(500).json({ error: 'An error occurred' });
@@ -200,7 +200,6 @@ res.render('signup',{message:''});
 
 router.post('/blog-post', (req, res) => {
 
-  console.log(req.session.user._id);
       const newPost = new Post({
         title:req.body.title,
         content: req.body.content,
@@ -292,7 +291,7 @@ router.post('/update-post', (req, res) => {
 
 //USER LIST
 router.get('/users',(req,res)=>{
-  const userId = req.session.user.id;
+  const userId = req.session.user._id;
 
   User.find().sort({ _id: -1 })
   .then(users => {

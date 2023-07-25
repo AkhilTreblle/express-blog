@@ -12,9 +12,10 @@ Demo project for blog posting and approval from the backend, built with Express 
 
 ## Features
 
-- List some of the key features of your blog project.
-- Mention any unique or noteworthy functionalities.
-- Add bullet points for quick readability.
+- Signup/Login 
+- Creating blogs from user side
+- Topic manager with approval / rejection 
+- Super admin for creating topics and assigning topic managers
 
 ## Installation
 
