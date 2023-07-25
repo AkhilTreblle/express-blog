@@ -34,26 +34,24 @@ Include additional details or screenshots about how to use your blog project eff
 
 A couple of screenshots to delight you before you use this template.
 
-### 🔺 All the issue templates
+### 🔺 Login 
 
 <p align="center">
-  <img width="70%" height="70%" src="https://i.imgur.com/SDJixBz.png" alt="All the issue templates.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/login.png" alt="All the issue templates.">
 </p>
 
-### 🔻 An issue template opened
+### 🔻 Topic Manager
 
 <p align="center">
-  <img width="70%" height="70%" src="https://i.imgur.com/r5AiLWu.png" alt="Bug issue template opened.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/topic-manager.png" alt="Bug issue template opened.">
 </p>
 
-### 📘 The README template
+### 📘 Home
 
-Badges and texts will be replaced with your project details!
 
 <p align="center">
-  <img width="70%" height="70%" src="https://i.imgur.com/dKKh53K.png" alt="README.md template.">
+  <img width="70%" height="70%" src="https://github.com/AkhilTreblle/express-blog/public/images/home.png" alt="README.md template.">
 
-  Or watch [this video](https://gifs.com/gif/josee9988-s-readme-md-MwO5E3) to see the whole README template.
 </p>
 
 ## API Endpoints
