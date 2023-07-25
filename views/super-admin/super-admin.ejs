@@ -98,9 +98,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/list">
+                <a class="nav-link active" href="/dashboard">
                   <i class="material-icons">note_add</i>
-                  <span>Add New Category</span>
+                  <span>Add New Topic</span>
                 </a>
               </li>
              
@@ -183,7 +183,7 @@
             <div class="page-header row no-gutters py-4">
               <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
                 <span class="text-uppercase page-subtitle">Blog Posts</span>
-                <h3 class="page-title">Add New Category</h3>
+                <h3 class="page-title">Add New Topic</h3>
               </div>
             </div>
             <!-- End Page Header -->
@@ -197,7 +197,7 @@
 							<span aria-hidden="true">&times;</span>
 						  </button>
 						  <i class="fa fa-check mx-2"></i>
-						  <strong>Success!</strong> New category added!
+						  <strong>Success!</strong> New topic added!
 						</div>
 					  <% } %>
 					  
@@ -209,7 +209,7 @@
 				
 						  <div class="form-group">
 							<select id="user" class="form-control mb-3" name="user">
-							  <option value="">Please choose the category manager</option>
+							  <option value="">Please choose the topic manager</option>
                 <% allUsers.forEach((user) => { %>
 							  <option value="<%= user.id %>"><%= user.name %></option>
 
