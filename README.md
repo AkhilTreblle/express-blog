@@ -25,10 +25,36 @@ Demo project for blog posting and approval from the backend, built with Express 
 
 ## Usage
 
-1. Run the development server: `npm run start`
-2. Visit `http://localhost:3000` in your web browser.
+1. Run the development server: `node index`
+2. Visit `http://localhost:3030` in your web browser.
 
 Include additional details or screenshots about how to use your blog project effectively.
+
+## 📸 **Screenshots**
+
+A couple of screenshots to delight you before you use this template.
+
+### 🔺 All the issue templates
+
+<p align="center">
+  <img width="70%" height="70%" src="https://i.imgur.com/SDJixBz.png" alt="All the issue templates.">
+</p>
+
+### 🔻 An issue template opened
+
+<p align="center">
+  <img width="70%" height="70%" src="https://i.imgur.com/r5AiLWu.png" alt="Bug issue template opened.">
+</p>
+
+### 📘 The README template
+
+Badges and texts will be replaced with your project details!
+
+<p align="center">
+  <img width="70%" height="70%" src="https://i.imgur.com/dKKh53K.png" alt="README.md template.">
+
+  Or watch [this video](https://gifs.com/gif/josee9988-s-readme-md-MwO5E3) to see the whole README template.
+</p>
 
 ## API Endpoints
 
@@ -47,17 +73,7 @@ If your project includes an API, list the important endpoints and their function
 - MongoDB: Database
 - Other key libraries and tools you've used
 
-## Contributing
 
-We welcome contributions from the community! If you'd like to contribute to the project, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature/fix: `git checkout -b my-feature`
-3. Commit your changes: `git commit -m "Add a new feature"`
-4. Push to the branch: `git push origin my-feature`
-5. Open a pull request.
-
-Please read our [Contribution Guidelines](CONTRIBUTING.md) for more information.
 
 ## License
 
