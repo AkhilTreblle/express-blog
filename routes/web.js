@@ -167,24 +167,47 @@ res.render('signup',{message:''});
           res.status(500).json({ error: 'An error occurred' });
         });
     } else if (user.role === 'manager') {
+      // Manager Dashboard
+  
       Category.findOne({ user: user._id })
         .then(category => {
           if (!category) {
             res.status(500).json({ error: 'An error occurred' });
-            // Return here or use else condition for the next .then()
             return;
           }
   
-          return Post.find({ status: 'pending', category: category._id }).populate('user');
+          const categoryID = category._id;
+  
+          // Get the total posts count from the category
+          const totalPostsPromise = Post.countDocuments({ category: categoryID });
+  
+          // Get the pending posts
+          const pendingPostsPromise = Post.find({ status: 'pending', category: categoryID }).populate('user');
+  
+          // Get the counts for pending, rejected, and approved posts
+          const pendingPromise = Post.countDocuments({ status: 'pending', category: categoryID });
+          const rejectedPromise = Post.countDocuments({ status: 'rejected', category: categoryID });
+          const approvedPromise = Post.countDocuments({ status: 'approved', category: categoryID });
+  
+          // Wait for all the promises to be resolved
+          return Promise.all([pendingPostsPromise, pendingPromise, rejectedPromise, approvedPromise, totalPostsPromise]);
         })
-        .then(pendingPosts => {
-          // Now you have the 'pendingPosts' and 'foundCategory' data, you can render the view with this data
-          res.render('topic-manager/topic-manager', { user, pendingPosts });
+        .then(([pendingPosts, pendingCount, rejectedCount, approvedCount, totalPosts]) => {
+          // Now you have the 'pendingPosts', 'pendingCount', 'rejectedCount', 'approvedCount', and 'totalPosts',
+          // you can render the view with this data
+          res.render('topic-manager/topic-manager', {
+            user,
+            pendingPosts,
+            pendingCount,
+            rejectedCount,
+            approvedCount,
+            totalPosts
+          });
         })
         .catch(error => {
           res.status(500).json({ error: 'An error occurred' });
         });
-    } else {
+    }else {
       Category.find()
         .then(categories => {
           res.render('user-dashboard/create-post', { user, message, categories });
@@ -297,6 +320,23 @@ router.get('/users',(req,res)=>{
   .then(users => {
     user = req.session.user;
     res.render('super-admin/users', { users ,user});
+
+  }).catch(error => {
+      console.log(error);
+      res.status(500).json({ error: 'An error occurred' });
+    });
+ 
+
+});
+
+
+router.get('/single-blog:id',(req,res)=>{
+  const userId = req.session.user._id;
+
+  Post.find({id: req.params.id})
+  .then(post => {
+
+    res.render('user-dashboard/single-blog', { post});
 
   }).catch(error => {
       console.log(error);

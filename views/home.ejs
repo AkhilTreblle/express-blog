@@ -30,7 +30,32 @@
 	<script src="/static/js/jquery-migrate-1.2.1.min.js"></script>
 
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	
+	<style>
+		.fa-heart-o,
+		.fa-heart {
+			font-size: 24px;
+			color: red;
+			cursor: pointer;
+			margin-right: 10px;
+		}
 
+		.fa-heart-o {
+			display: inline-block;
+		}
+
+		.fa-heart {
+			display: none;
+		}
+
+		.fa-heart.liked {
+			display: inline-block;
+		}
+		.fa-heart, .like {
+			color: red;
+		}
+	</style>
 </head>
 <body>
 
@@ -111,7 +136,13 @@
 								<span class="meta-date"><a href="#"><%= post.created_at %></a></span>
 								<span class="meta-author"><a href="#"><%= post.user.name %></a></span>
 								<h3><a href="blog-single.html"><%= post.title %></a></h3>
-								<p class="light-text"><%= post.content %> <a href="blog-single.html">Continue Reading...</a></p>
+								<div class="heart-container">
+									<span id="heart-<%= post.id %>" class="fa fa-heart-o like"></span>
+								</div>
+								<p class="light-text">
+									<%= post.content %> <a href="blog-single.html">Continue Reading...</a>
+									
+								</p>
 							</div> <!-- /.blog-content -->
 						</div> <!-- /.post-blog -->
 						<% }); %>
@@ -135,10 +166,29 @@
 
 
 
-	<!-- Scripts -->
-	<script src="/static/js/min/plugins.min.js"></script>
-	<script src="/static/js/min/medigo-custom.min.js"></script>
+	<script src="/static/js/jquery-1.10.2.min.js"></script>
+	<script src="/static/js/jquery-migrate-1.2.1.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$(".blog-posts").on("click", ".heart-container", function() {
+				const postId = $(this).find("span.fa-heart-o").attr("id").split("-")[1];
+				const heartIcon = $(this).find("#heart-" + postId);
+	
+				if (heartIcon.hasClass("like")) {
+					// Already liked, so remove the like
+					heartIcon.removeClass("like").addClass("fa-heart-o");
+					console.log('Removed like from post with ID: ' + postId);
+				} else {
+					// Not liked, so add the like
+					heartIcon.removeClass("fa-heart-o").addClass("like");
+					console.log('Liked post with ID: ' + postId);
+				}
+			});
+		});
+	</script>
+
 
 
 </body>
+
 </html>
