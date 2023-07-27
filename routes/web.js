@@ -330,21 +330,21 @@ router.get('/users',(req,res)=>{
 });
 
 
-router.get('/single-blog:id',(req,res)=>{
-  const userId = req.session.user._id;
-
-  Post.find({id: req.params.id})
-  .then(post => {
-
-    res.render('user-dashboard/single-blog', { post});
-
-  }).catch(error => {
+router.get('/single-blog/:id', (req, res) => {
+  Post.findById(req.params.id).populate('user', 'name')
+  .populate('category', 'name')
+    .then(post => {
+      if (!post) {
+        // If no post is found with the given ID, handle the error or return a not found response.
+        return res.status(404).json({ error: 'Post not found' });
+      }
+      res.render('user-dashboard/single-blog', { post });
+    })
+    .catch(error => {
       console.log(error);
       res.status(500).json({ error: 'An error occurred' });
     });
- 
-
-})
+});
 
 
 module.exports = router;
