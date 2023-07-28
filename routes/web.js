@@ -17,6 +17,7 @@ router.use(session({
 const User = require('../models/user');
 const Post = require('../models/post');
 const Category = require('../models/category');
+const Comment = require('../models/comment');
 checkSignIn = (req, res,next) => {
   if(req.session.user){
      next();     //If session exists, proceed to page
@@ -42,9 +43,11 @@ router.get('/', (req, res) => {
         }
       })
       .then(() => {
+        const user = req.session.user;
+       
         Post.find({ status: 'approved' }).populate('user').sort({ _id: -1 })
         .then(approvedPosts => {
-          res.render('home', { approvedPosts });
+          res.render('home', { approvedPosts ,user});
         })
         .catch(error => {
           console.error('Error fetching approved posts:', error);
@@ -89,7 +92,7 @@ res.render('signup',{message:''});
           };
             
           
-            res.redirect('/dashboard'); 
+            res.redirect('/'); 
             
           
         } else {
@@ -131,7 +134,7 @@ res.render('signup',{message:''});
           .save()
           .then((user) => {
             req.session.user = user; // Store the user in the session
-            res.redirect('/dashboard');
+            res.redirect('/');
           })
           .catch((error) => {
             res.render('signup', { message: 'Error creating user: ' + error });
@@ -333,6 +336,7 @@ router.get('/users',(req,res)=>{
 router.get('/single-blog/:id', (req, res) => {
   Post.findById(req.params.id).populate('user', 'name')
   .populate('category', 'name')
+  .populate('comments')
     .then(post => {
       if (!post) {
         // If no post is found with the given ID, handle the error or return a not found response.
@@ -345,6 +349,26 @@ router.get('/single-blog/:id', (req, res) => {
       res.status(500).json({ error: 'An error occurred' });
     });
 });
+router.post('/comment', (req, res) => {
+  if (!req.session.user) {
+    // User is not logged in, redirect them to the login page or display a message
+    return res.redirect('/signup');
+  }
 
+  const newComment = new Comment({
+    comment: req.body.comment,
+    post: req.body.post,
+    user: req.session.user._id,
+  });
 
+  newComment.save()
+    .then(() => {
+      // Redirect to the single blog page of the corresponding post
+      res.redirect('/single-blog/' + req.body.post);
+    })
+    .catch((error) => {
+      // Handle the error appropriately, you can redirect to the dashboard or show an error message
+      res.render('dashboard', { message: 'Error creating comment: ' + error });
+    });
+});
 module.exports = router;

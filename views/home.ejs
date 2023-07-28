@@ -82,8 +82,14 @@
 						<nav class="main-nav visible-md visible-lg">
 							<ul class="sf-menu">
 								
-					            
+					            <% if(user){ %>
+
+									<li><a href="#"><%= user.name %> </a></li>
+									<li><a href="/dashboard">Dashboard </a></li>
+									<li><a href="/logout">Logout </a></li>
+									<% } else { %>
 					            <li><a href="/signup">Do you want to be an Author ?  </a></li>
+								<% } %>
 							</ul> <!-- /.sf-menu -->
 						</nav> <!-- /.main-nav -->
 

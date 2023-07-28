@@ -8,5 +8,6 @@ const postSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Replace 'User' with the appropriate model name for the user
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' }, // Replace 'User' with the appropriate model name for the user
     created_at: { type: Date, default: Date.now },
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
   });
 module.exports = mongoose.model('Post', postSchema);
